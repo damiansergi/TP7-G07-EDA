@@ -144,6 +144,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="jsonExternal.hpp" />
+    <ClInclude Include="libCurlExternal.h" />
+    <ClInclude Include="Tweet.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

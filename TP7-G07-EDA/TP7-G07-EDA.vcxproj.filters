@@ -26,5 +26,11 @@
     <ClInclude Include="jsonExternal.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Tweet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libCurlExternal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

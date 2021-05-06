@@ -17,7 +17,7 @@ static size_t myCallback(void *contents, size_t size, size_t nmemb, void *userp)
 *
 */
 
-int main(void)
+int getTweets(void)
 {
 	json j;                    //Variable donde vamos a guardar lo que devuelva Twitter
 
@@ -102,6 +102,7 @@ int main(void)
 		// Si no hubo errores hago un clean up antes de realizar un nuevo query.
 		curl_easy_cleanup(curl);
 		
+
 		//Si el request de CURL fue exitoso entonces twitter devuelve un JSON
 		//Abajo busco el token en el JSON para luego acceder a los twits.
 		j = json::parse(readString);
@@ -188,6 +189,8 @@ int main(void)
 		//Si el request de CURL fue exitoso entonces twitter devuelve un JSON
 		//con toda la informacion de los tweets que le pedimos
 		j = json::parse(readString);
+
+		std::cout << readString << std::endl;
 
 		try
 		{
