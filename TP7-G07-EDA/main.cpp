@@ -20,29 +20,47 @@ Ir mostrandolos y checkeando que es lo que quiere hacerse en la GUI
 #include "damianLCD.h"
 #include "gui.h"
 
-
 #include <stdint.h>
 
 using namespace std;
 
 int main(int, char**)
 {
-    damianLCD LCDDamian;
 
+    Gui gui(720, 1280);
+
+    damianLCD LCDDamian;
     basicLCD* lcdArray[DISPLAYS] = { &LCDDamian, NULL, NULL };
 
-    Gui gui(720, 1280, lcdArray);
+    for (int i = 0; i < DISPLAYS; i++) {
+
+        gui.setLCDArray(i, lcdArray[i]);
+    }
 
     gui.setup();
 
+    DisplayState state = USERNAMEINPUT; //We begin reading the username and number of tweets that will be read
+
+
     // Main loop
-    bool running = true;
 
-    while (running)
+    while (state != STOP_RUNNING)
     {
+        if (state == USERNAMEINPUT) {
 
-        gui.functions();
 
+            state = gui.functions(state);
+        }
+        else if (state == DOWNLOADINGTWEETS) {
+
+
+            state = gui.functions(state);
+        }
+        else if (state == SHOWINGTWEETS) {
+
+
+            state = gui.functions(state);
+        }
     }
 
     return 0;

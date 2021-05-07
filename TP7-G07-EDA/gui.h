@@ -16,15 +16,17 @@
 
 enum LCDORDER {DAMIAN = 0, KEVIN, MATEO};
 
-enum DisplayState{USERNAMEINPUT, SHOWINGTWEETS, DOWNLOADINGTWEETS};
+enum DisplayState {STOP_RUNNING, USERNAMEINPUT, DOWNLOADINGTWEETS, SHOWINGTWEETS, };
 
 class Gui {
 public:
 
-	Gui(int height, int width, basicLCD* lcdArray[3]);
+	Gui(int height, int width);
 	~Gui();
 	void setup();
-	void functions();
+	DisplayState functions(DisplayState estado);
+	void setLCDArray(int index, basicLCD* lcd);
+
 
 
 private:
@@ -42,7 +44,6 @@ private:
 	bool checkbox_lcdDAMI_selected;
     bool checkbox_lcdKEVIN_selected;
     bool checkbox_lcdMATEO_selected;
-	DisplayState state;
 
 	basicLCD * lcdArray[DISPLAYS];
 };
