@@ -171,6 +171,8 @@ int getTweets(void)
 			//Debemos hacer polling de la transferencia hasta que haya terminado
 			curl_multi_perform(multiHandle, &stillRunning);
 
+			//Stillrunning = IsCancelButtonPressed();
+
 			//Mientras tanto podemos hacer otras cosas
 		}
 
