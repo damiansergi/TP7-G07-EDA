@@ -1,5 +1,8 @@
 #include <iostream>
 
+#define MAXIMUM_USERNAME_LENGTH 15
+#define MAXIMUM_TWEETS_DIGITS 2
+
 class Tweet {
 
 public:

@@ -5,6 +5,3 @@
 int getTweets(void);
 
 #endif // !libCurlExternal
-
-
-
