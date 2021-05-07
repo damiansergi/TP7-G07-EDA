@@ -3,21 +3,14 @@
 #include <list>
 #include <curl/curl.h>
 #include "jsonExternal.hpp"
+#include "libCurlExternal.h"
 
 //Vamos a usar la librería NLOHMANN JSON 
 using json = nlohmann::json;
 
-//Funciones auxiliares
-void printNames(std::list<std::string> names);
-static size_t myCallback(void *contents, size_t size, size_t nmemb, void *userp);
 
-/*
-* Main de prueba.
-* Obtiene twits de una cuenta pública (en este caso, los últimos 10 twits de La Nación)
-*
-*/
 
-int getTweets(void)
+int getTweet::getTweets(void)
 {
 	json j;                    //Variable donde vamos a guardar lo que devuelva Twitter
 
@@ -39,8 +32,6 @@ int getTweets(void)
 	std::string API_key = "HCB39Q15wIoH61KIkY5faRDf6";
 	std::string API_SecretKey = "7s8uvgQnJqjJDqA6JsLIFp90FcOaoR5Ic41LWyHOic0Ht3SRJ6";
 
-
-	std::list<std::string> names;
 
 	/************************************************************************************
 	*                      Get Bearer Token from the Twitter API						*
@@ -81,7 +72,7 @@ int getTweets(void)
 
 		//Le decimos a curl que cuando haya que escribir llame a myCallback
 		//y que use al string readString como user data.
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, myCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &getTweet::myCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readString);
 
 		// Perform the request, res will get the return code
@@ -161,7 +152,7 @@ int getTweets(void)
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list);
 
 		//Seteamos los callback igual que antes
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, myCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &getTweet::myCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readString);
 
 		//Realizamos ahora un perform no bloqueante
@@ -200,7 +191,7 @@ int getTweets(void)
 			for (auto element : j)
 				names.push_back(element["text"]);
 			std::cout << "Tweets retrieved from Twitter account: " << std::endl;
-			printNames(names);
+			printNames();																			////////// BORRAR
 		}
 		catch (std::exception& e)
 		{
@@ -218,7 +209,7 @@ int getTweets(void)
 
 
 //Funcion auxiliar para imprimir los tweets en pantalla una vez parseados
-void printNames(std::list<std::string> names)
+void getTweet::printNames()
 {
 	for (auto c : names)
 	{
@@ -232,7 +223,7 @@ void printNames(std::list<std::string> names)
 }
 
 //Concatena lo recibido en content a s
-static size_t myCallback(void *contents, size_t size, size_t nmemb, void *userp)
+size_t getTweet::myCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
 	size_t realsize = size * nmemb;
 	char* data = (char *)contents;

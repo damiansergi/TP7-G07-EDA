@@ -147,12 +147,14 @@
     <ClCompile Include="imgui_impl_allegro5.cpp" />
     <ClCompile Include="imgui_tables.cpp" />
     <ClCompile Include="imgui_widgets.cpp" />
+    <ClCompile Include="LCDgui.cpp" />
     <ClCompile Include="libCurlExternal.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="basicLCD.h" />
     <ClInclude Include="damianLCD.h" />
+    <ClInclude Include="gui.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_impl_allegro5.h" />

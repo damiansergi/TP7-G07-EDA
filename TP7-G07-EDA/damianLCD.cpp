@@ -41,6 +41,7 @@ damianLCD::damianLCD() {
         error = true;
     }
     */
+
     if (!(font = al_load_ttf_font("LiberationSerif-Regular.ttf", 50, 0))) {
 
         cout << "failed to initialize the font!\n" << endl;

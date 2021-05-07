@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 
 #define MAXIMUM_USERNAME_LENGTH 15
@@ -6,8 +8,6 @@
 class Tweet {
 
 public:
-
-
 
 private:
 
