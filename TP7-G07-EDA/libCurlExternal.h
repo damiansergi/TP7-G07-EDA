@@ -4,13 +4,14 @@
 #include <list>
 #include <iostream>
 
-class getTweet{
+class getTweet {
 public:
-	int getTweets(void);
+	int getTweets(std::string account, int number_of_tweets);
+	std::list<std::string> getinfo();
 private:
-	void printNames();										////CREO QUE ESTO LO DEBERIAMOS BORRAR
-	size_t myCallback(void* contents, size_t size, size_t nmemb, void* userp);
+	void saveNames(std::string account);
 	std::list<std::string> names;
+	std::list<std::string> info;
 };
 
 #endif // !libCurlExternal

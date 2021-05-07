@@ -28,7 +28,7 @@ int main(int, char**)
 {
 
     Gui gui(720, 1280);
-
+    getTweet tweet;
     damianLCD LCDDamian;
     basicLCD* lcdArray[DISPLAYS] = { &LCDDamian, NULL, NULL };
 
@@ -53,12 +53,12 @@ int main(int, char**)
         }
         else if (state == DOWNLOADINGTWEETS) {
 
-
+            tweet.getTweets("lanacion", 5);
             state = gui.functions(state);
         }
         else if (state == SHOWINGTWEETS) {
 
-
+            tweet.getinfo();
             state = gui.functions(state);
         }
     }

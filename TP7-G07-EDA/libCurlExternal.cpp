@@ -2,15 +2,18 @@
 #include <exception>
 #include <list>
 #include <curl/curl.h>
+#include <string>
+#include <ctime>
 #include "jsonExternal.hpp"
 #include "libCurlExternal.h"
-
+#pragma warning(disable : 4996)
 //Vamos a usar la librería NLOHMANN JSON 
 using json = nlohmann::json;
 
+size_t myCallback(void* contents, size_t size, size_t nmemb, void* userp);
 
 
-int getTweet::getTweets(void)
+int getTweet::getTweets(std::string account, int number_of_tweets)
 {
 	json j;                    //Variable donde vamos a guardar lo que devuelva Twitter
 
@@ -18,13 +21,13 @@ int getTweet::getTweets(void)
 	// (HTTP seguro) el cual requeire un protocolo especial de encriptación
 	// más complejo que el plain HTTP que utilizamos en el TP de Networking.
 
-	CURL *curl;					//Variable donde vamos a guardar las configuraciones de una transferencia
-	CURLM *multiHandle;			//Variable donde vamos a atachear los easy handles
+	CURL* curl;					//Variable donde vamos a guardar las configuraciones de una transferencia
+	CURLM* multiHandle;			//Variable donde vamos a atachear los easy handles
 	CURLcode res;
 	std::string readString, token;
 
 	// Query es la dirección de Twitter que vamos a consultar. vamos a bajar los &count twits de screen_name en formato JSON.
-	std::string query = "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=lanacion&count=10";
+	std::string query = "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=" + account + "&count=" + std::to_string(number_of_tweets);
 
 	// Las dos constantes de abajo son el API_Key y API_SecretKey que necesita Twitter para realizar la autenticación de nuestra App
 	// y por lo tanto permitirnos el acceso a sus servidores. Son parte de la estrategia de autenticación Oauth2.
@@ -57,7 +60,7 @@ int getTweet::getTweets(void)
 		//Se lo seteamos a CURL.
 		curl_easy_setopt(curl, CURLOPT_USERPWD, userPwd.c_str());
 
-		struct curl_slist *list = NULL;
+		struct curl_slist* list = NULL;
 		//Pueden setear el Header con la linea de abajo, pero necesitan codificar las claves en Base64
 		//list = curl_slist_append(list, "Authorization: Basic YlB5alk1bWRMR2V4TlhPTHhSUjd3MUVjUzpkR2liU3FIcURrektQMUtPbzFJTjRBd21tZGI1Tnl5ZjBFQTZkTDBLWlpmZDE0ZnhQQw==");
 
@@ -72,7 +75,7 @@ int getTweet::getTweets(void)
 
 		//Le decimos a curl que cuando haya que escribir llame a myCallback
 		//y que use al string readString como user data.
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &getTweet::myCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, myCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readString);
 
 		// Perform the request, res will get the return code
@@ -92,7 +95,7 @@ int getTweet::getTweets(void)
 
 		// Si no hubo errores hago un clean up antes de realizar un nuevo query.
 		curl_easy_cleanup(curl);
-		
+
 
 		//Si el request de CURL fue exitoso entonces twitter devuelve un JSON
 		//Abajo busco el token en el JSON para luego acceder a los twits.
@@ -105,7 +108,7 @@ int getTweet::getTweets(void)
 			//Tratamos de acceder al campo acces_token del JSON
 			std::string aux = j["access_token"];
 			token = aux;
-			std::cout << "Bearer Token get from Twitter API: \n" << token << std::endl;
+			//std::cout << "Bearer Token get from Twitter API: \n" << token << std::endl;
 		}
 		catch (std::exception& e)
 		{
@@ -121,7 +124,7 @@ int getTweet::getTweets(void)
 	}
 
 
-	
+
 	//Una vez obtenido el Token ahora voy a buscar los Twits
 
 	/************************************************************************************
@@ -133,11 +136,11 @@ int getTweet::getTweets(void)
 	multiHandle = curl_multi_init();
 	readString = "";
 	int stillRunning = 0;
-	if ((curl != NULL) & (multiHandle!= NULL))
+	if ((curl != NULL) & (multiHandle != NULL))
 	{
 		//Attacheo el easy handle para manejar una coneccion no bloqueante.
 		curl_multi_add_handle(multiHandle, curl);
-		
+
 		//Seteamos URL FOLLOWLOCATION y los protocolos a utilizar igual que antes.
 		curl_easy_setopt(curl, CURLOPT_URL, query.c_str());
 		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
@@ -145,14 +148,14 @@ int getTweet::getTweets(void)
 
 		//Construimos el Header de autenticacion como lo especifica la API
 		//usando el token que obtuvimos antes
-		struct curl_slist *list = NULL;
+		struct curl_slist* list = NULL;
 		std::string aux = "Authorization: Bearer ";
 		aux = aux + token;
 		list = curl_slist_append(list, aux.c_str());
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list);
 
 		//Seteamos los callback igual que antes
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &getTweet::myCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, myCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readString);
 
 		//Realizamos ahora un perform no bloqueante
@@ -178,20 +181,22 @@ int getTweet::getTweets(void)
 
 		//Siempre realizamos el cleanup al final
 		curl_easy_cleanup(curl);
-		
+
 		//Si el request de CURL fue exitoso entonces twitter devuelve un JSON
 		//con toda la informacion de los tweets que le pedimos
 		j = json::parse(readString);
 
-		std::cout << readString << std::endl;
+		//std::cout << readString << std::endl;
 
 		try
 		{
 			//Al ser el JSON un arreglo de objetos JSON se busca el campo text para cada elemento
-			for (auto element : j)
+			for (auto element : j) {
+				names.push_back(element["created_at"]);
 				names.push_back(element["text"]);
+			}
 			std::cout << "Tweets retrieved from Twitter account: " << std::endl;
-			printNames();																			////////// BORRAR
+			saveNames(account);
 		}
 		catch (std::exception& e)
 		{
@@ -201,32 +206,59 @@ int getTweet::getTweets(void)
 	}
 	else
 		std::cout << "Cannot download tweets. Unable to start cURL" << std::endl;
-	
-	
-	getchar();
 	return 0;
 }
 
 
 //Funcion auxiliar para imprimir los tweets en pantalla una vez parseados
-void getTweet::printNames()
+void getTweet::saveNames(std::string account)
 {
-	for (auto c : names)
+	//std::string temp;
+	for (auto c = names.begin(); c != names.end(); c++)
 	{
-		//Eliminamos el URL al final para mostrar
-		int extended = c.find("https");
-		c = c.substr(0, extended);
-		c.append("...");
-		std::cout << c << std::endl;
-		std::cout << "-----------------------------------------" << std::endl;
+		std::string y, m, m2, d, h, min, temp;
+		y = (*c).substr(28, 2);
+		m = (*c).substr(4, 3);
+		d = (*c).substr(8, 2);
+		h = (*c).substr(11, 2);
+		min = (*c).substr(14, 2);
+		//std::cout << y << std::endl;
+		//std::cout << m << std::endl;
+		//std::cout << d << std::endl;
+		//std::cout << h << std::endl;
+		//std::cout << min << std::endl;
+		if (!strcmp(m.c_str(), "Jan")) m2 = "1";
+		if (!strcmp(m.c_str(), "Feb")) m2 = "2";
+		if (!strcmp(m.c_str(), "Mar")) m2 = "3";
+		if (!strcmp(m.c_str(), "Apr")) m2 = "4";
+		if (!strcmp(m.c_str(), "May")) m2 = "5";
+		if (!strcmp(m.c_str(), "Jun")) m2 = "6";
+		if (!strcmp(m.c_str(), "Jul")) m2 = "7";
+		if (!strcmp(m.c_str(), "Aug")) m2 = "8";
+		if (!strcmp(m.c_str(), "Sep")) m2 = "9";
+		if (!strcmp(m.c_str(), "Oct")) m2 = "10";
+		if (!strcmp(m.c_str(), "Nov")) m2 = "11";
+		if (!strcmp(m.c_str(), "Dec")) m2 = "12";
+		temp = d + '/' + m2 + '/' + y + " - " + h + ':' + min;
+		info.push_back(temp);
+		std::cout << temp << std::endl;
+		c++;
+		int extended = (*c).find("https"); 		//Eliminamos el URL al final para mostrar
+		temp = account + ": - " + (*c).substr(0, extended) + " -";
+		info.push_back(temp);
+		std::cout << temp << std::endl;
 	}
 }
 
+std::list<std::string> getTweet::getinfo() {
+	return info;
+}
+
 //Concatena lo recibido en content a s
-size_t getTweet::myCallback(void *contents, size_t size, size_t nmemb, void *userp)
+static size_t myCallback(void* contents, size_t size, size_t nmemb, void* userp)
 {
 	size_t realsize = size * nmemb;
-	char* data = (char *)contents;
+	char* data = (char*)contents;
 	//fprintf(stdout, "%s",data);
 	std::string* s = (std::string*)userp;
 	s->append(data, realsize);
