@@ -48,6 +48,9 @@
     <ClCompile Include="LCDgui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LCD_Lucas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="jsonExternal.hpp">
@@ -87,6 +90,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="gui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LCD_Lucas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -18,6 +18,7 @@ Ir mostrandolos y checkeando que es lo que quiere hacerse en la GUI
 #include "Tweet.h"
 #include "basicLCD.h"
 #include "damianLCD.h"
+#include "LCD_Lucas.h"
 #include "gui.h"
 
 #include <stdint.h>
@@ -30,7 +31,8 @@ int main(int, char**)
     Gui gui(720, 1280);
     getTweet tweet;
     damianLCD LCDDamian;
-    basicLCD* lcdArray[DISPLAYS] = { &LCDDamian, NULL, NULL };
+    LCD_Lucas LCDLucas;
+    basicLCD* lcdArray[DISPLAYS] = { &LCDDamian, &LCDLucas, NULL };
 
     for (int i = 0; i < DISPLAYS; i++) {
 
