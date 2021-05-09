@@ -5,6 +5,8 @@
 
 using namespace std;
 
+
+
 Gui::Gui(int height, int width) {
 
     al_init();
@@ -121,13 +123,15 @@ DisplayState Gui::functions(DisplayState estado, vector<string>& tweets) {
     }
     else if (estado == DOWNLOADINGTWEETS) {
 
+        actualTweet = 0;
+
         framesCounter++;
 
         tempString = string("@") + username;
 
         for (int i = 1 + username.length(); i <= 16; i++) {
 
-            tempString.append(' ', 1);
+            tempString.append(" ");
         }
 
         tempVector.push_back(tempString);
@@ -152,7 +156,7 @@ DisplayState Gui::functions(DisplayState estado, vector<string>& tweets) {
 
         tempVector.push_back(tempString);
 
-        moveTweet = printInDisplay(DAMIAN, DONTSHOW, DONTSHOW, tempVector);
+        moveTweet = printInDisplay(DAMIAN, KEVIN, DONTSHOW, tempVector);
 
         ImGui::Begin("Cancel Download");
 
@@ -195,23 +199,33 @@ DisplayState Gui::functions(DisplayState estado, vector<string>& tweets) {
             tweetShownOFFSET++;
             if (moveTweet) {
                 actualTweet++;
+
+                al_rest(PAUSA_PRUDENCIA);
+
                 if (actualTweet > numberOfTweets - 1) {
+                    
+
 
                     actualTweet = 0;
                 }
             }
             framesCounter = 0;
+
         }
         if (ImGui::Button("Reshow Tweet")) {
             tweetShownOFFSET = 0;
         }
         if (ImGui::Button("Jump to Previous Tweet")) {
-            actualTweet++;
-            tweetShownOFFSET = 0;
+            if (actualTweet < numberOfTweets - 1) {
+                actualTweet++;
+                tweetShownOFFSET = 0;
+            }
         }
         if (ImGui::Button("Jump to Next Tweet")) {
-            actualTweet--;
-            tweetShownOFFSET = 0;
+            if (actualTweet > 1 ) {
+                actualTweet--;
+                tweetShownOFFSET = 0;
+            }
         }
         ImGui::SliderFloat("Display Speed", &speed, 0.0f, 1.0f);
 
@@ -219,9 +233,11 @@ DisplayState Gui::functions(DisplayState estado, vector<string>& tweets) {
     }
     else if (estado == PRINTERROR) {
 
+        actualTweet = 0;
+
         tempString = string("ERROR           ");
         tempVector.push_back(tempString);
-        tempString = string("ERROR           ");
+        tempString = string("   INPUT AGAIN  ");
         tempVector.push_back(tempString);
 
         printInDisplay(DAMIAN, DONTSHOW, DONTSHOW, tempVector);
