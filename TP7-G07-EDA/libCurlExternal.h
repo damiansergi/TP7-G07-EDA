@@ -3,10 +3,12 @@
 #define	libCurlExternal_h
 #include <list>
 #include <iostream>
+#include "gui.h"
 
 class getTweet {
 public:
-	int getTweets(std::string account, int number_of_tweets);
+
+	int getTweets(std::string account, int number_of_tweets, Gui& gui);
 	std::list<std::string> getinfo();
 private:
 	void saveNames(std::string account);

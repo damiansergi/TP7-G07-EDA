@@ -6,6 +6,7 @@
 #include <ctime>
 #include "jsonExternal.hpp"
 #include "libCurlExternal.h"
+
 #pragma warning(disable : 4996)
 //Vamos a usar la librería NLOHMANN JSON 
 using json = nlohmann::json;
@@ -13,8 +14,10 @@ using json = nlohmann::json;
 size_t myCallback(void* contents, size_t size, size_t nmemb, void* userp);
 
 
-int getTweet::getTweets(std::string account, int number_of_tweets)
+int getTweet::getTweets(std::string account, int number_of_tweets, Gui& gui)
 {
+	std::vector<std::string> tweets; //Dummy para llamar a state.functions
+
 	json j;                    //Variable donde vamos a guardar lo que devuelva Twitter
 
 	// Vamos a utilizar la librería CURL ya que debemos conectarons a un servidor HTTPS
@@ -162,12 +165,12 @@ int getTweet::getTweets(std::string account, int number_of_tweets)
 		curl_multi_perform(multiHandle, &stillRunning);
 		while (stillRunning)
 		{
+
+			stillRunning = gui.functions(DOWNLOADINGTWEETS, tweets);
+
 			//Debemos hacer polling de la transferencia hasta que haya terminado
 			curl_multi_perform(multiHandle, &stillRunning);
 
-			//Stillrunning = IsCancelButtonPressed();
-
-			//Mientras tanto podemos hacer otras cosas
 		}
 
 		//Checkeamos errores

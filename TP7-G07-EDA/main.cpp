@@ -1,19 +1,3 @@
-/*
-
-    MAIN()
-
-Inicializacion de la GUI
-        |
-        |
-Ver que es lo que se quiere hacer
-        |
-        |
-Crear una lista de tweets --> para esto hay que parsear todos los datos en libCurlExternal.cpp
-        |
-        |
-Ir mostrandolos y checkeando que es lo que quiere hacerse en la GUI
-*/
-
 #include "libCurlExternal.h"
 #include "Tweet.h"
 #include "basicLCD.h"
@@ -33,6 +17,7 @@ int main(int, char**)
     damianLCD LCDDamian;
     LCD_Lucas LCDLucas;
     basicLCD* lcdArray[DISPLAYS] = { &LCDDamian, &LCDLucas, NULL };
+    std::vector<std::string> tweets;
 
     for (int i = 0; i < DISPLAYS; i++) {
 
@@ -50,18 +35,25 @@ int main(int, char**)
     {
         if (state == USERNAMEINPUT) {
 
-
-            state = gui.functions(state);
+            state = gui.functions(state, tweets);   //Mientras los tweets no esten listos, paso un dummy
         }
         else if (state == DOWNLOADINGTWEETS) {
 
-            tweet.getTweets("lanacion", 5);
-            state = gui.functions(state);
+            tweet.getTweets(gui.username, gui.numberOfTweets, gui);
+            state = TRANSFORMINGTWEETS;
+        }
+        else if (state == TRANSFORMINGTWEETS) {
+
+            for (string const& c : tweet.getinfo()) {   //Transformo la lista de tweets en un vector de tweets
+                                                        //Para un manejo mucho mas eficiente
+                tweets.push_back(c);
+            }
+
+            state = SHOWINGTWEETS;
         }
         else if (state == SHOWINGTWEETS) {
 
-            tweet.getinfo();
-            state = gui.functions(state);
+            state = gui.functions(state, tweets);
         }
     }
 

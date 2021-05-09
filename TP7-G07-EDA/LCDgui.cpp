@@ -1,6 +1,8 @@
 #include "gui.h"
 
 #include <stdio.h>
+#include <vector>
+
 using namespace std;
 
 Gui::Gui(int height, int width) {
@@ -27,6 +29,10 @@ Gui::Gui(int height, int width) {
 
     numberOfTweets = 0;
     speed = 0.5;
+    tweetShownOFFSET = 0;
+    actualTweet = 0;
+
+    framesCounter = 0.5 * FRAMESREFERENCE;
 }
 
 Gui::~Gui() {
@@ -56,9 +62,17 @@ void Gui::setup() {
 
 }
 
-DisplayState Gui::functions(DisplayState estado) {
+DisplayState Gui::functions(DisplayState estado, vector<string>& tweets) {
 
-    DisplayState salida = estado; //Mientras sea true el while sigue corriendo 
+    LCDNAME name1 = DAMIAN;   //This variables will tell which displays are shown
+    LCDNAME name2 = DONTSHOW;
+    LCDNAME name3 = DONTSHOW;
+
+    vector<string> ultimoTweet;
+
+    int moveTweet = 0;
+
+    DisplayState salida = estado; 
 
     al_clear_to_color(al_map_rgb(100,100,100));   //Clearing of the display is made before LCD are written
 
@@ -96,59 +110,75 @@ DisplayState Gui::functions(DisplayState estado) {
             username = string(bufUsername);
             numberOfTweets = atoi(bufNumberOfTweets);
 
-            /*
-            Aca tenes listo para escribir los nombres de los cuales despues vas a pedir los tweets
-            */
-
-            salida = SHOWINGTWEETS;
+            salida = DOWNLOADINGTWEETS;
         }
 
         ImGui::End();
     }
     else if (estado == DOWNLOADINGTWEETS){
 
-        //Mostramos en el display que se estan descargando los datos
+        //TODO: Mostramos en el display que se estan descargando los datos
 
         ImGui::Begin("Cancel Download");
 
         if (ImGui::Button("Cancel")) {
 
-            
+            salida = STOP_RUNNING;
         }
 
         ImGui::End();
     }
     else if (estado == SHOWINGTWEETS) {
 
-        ImGui::Begin("Twitter Reader"); 
+        framesCounter++;
 
+        ImGui::Begin("Twitter Reader"); 
         ImGui::Text("Select how tweets will be shown");    // Display some text (you can use a format strings too)
 
-        ImGui::Checkbox("Show LCD Dami", &checkbox_lcdDAMI_selected);
+        ImGui::Checkbox("Unshow LCD Dami", &checkbox_lcdDAMI_selected);
         if (checkbox_lcdDAMI_selected) {
 
-            *(lcdArray[DAMIAN]) << "ueueueu";
+            name1 = DONTSHOW;
         }
 
-        ImGui::Checkbox("Show LCD Kevin", &checkbox_lcdKEVIN_selected);
-        if (checkbox_lcdKEVIN_selected)
-            ImGui::Text("Checkbox B seleccionado");
+        ImGui::Checkbox("Unshow LCD Kevin", &checkbox_lcdKEVIN_selected);
+        if (checkbox_lcdKEVIN_selected) {
 
-        ImGui::Checkbox("Show LCD Mateo", &checkbox_lcdMATEO_selected);
-        if (checkbox_lcdMATEO_selected)
-            ImGui::Text("Checkbox C seleccionado");
+            name2 = DONTSHOW;
+        }
 
+        ImGui::Checkbox("Unshow LCD Mateo", &checkbox_lcdMATEO_selected);
+        if (checkbox_lcdMATEO_selected) {
+
+            name3 = DONTSHOW;
+        }
+
+        moveTweet = printInDisplay(name1, name2, name3, tweets);
+
+        if (framesCounter >= (int)(FRAMESREFERENCE * (1 - speed))) {    //Actualizacion del programa
+
+            tweetShownOFFSET++;
+            if (moveTweet) {
+                actualTweet++;
+                if (actualTweet > numberOfTweets - 1) {
+
+                    actualTweet = 0;
+                }
+            }
+            framesCounter = 0;
+        }
         if (ImGui::Button("Reshow Tweet")) {
-
+            tweetShownOFFSET = 0;
         }
         if (ImGui::Button("Jump to Previous Tweet")) {
-
+            actualTweet++;
+            tweetShownOFFSET = 0;
         }
         if (ImGui::Button("Jump to Next Tweet")) {
-
+            actualTweet--;
+            tweetShownOFFSET = 0;
         }
         ImGui::SliderFloat("Display Speed", &speed, 0.0f, 1.0f);
-
 
         ImGui::End();
     }
@@ -160,7 +190,63 @@ DisplayState Gui::functions(DisplayState estado) {
 
     return salida;
 }
+
 void Gui::setLCDArray(int index, basicLCD * lcd) {
 
     lcdArray[index] = lcd;
+}
+
+int Gui::printInDisplay(LCDNAME name1, LCDNAME name2, LCDNAME name3, vector<string>& tweets) {
+
+    int salida = 0;
+    string tweetprint;  
+    basicLCD* lcdShownArray[DISPLAYS];
+    int arrayIndex = 0;
+
+    if (name1 == DAMIAN || name2 == DAMIAN || name3 == DAMIAN) {    //Cargo los displays que se hallan llamado
+
+        lcdShownArray[arrayIndex] = lcdArray[DAMIAN];
+        arrayIndex++;
+    }
+    if (name1 == KEVIN || name2 == KEVIN || name3 == KEVIN) {
+
+        lcdShownArray[arrayIndex] = lcdArray[KEVIN];
+        arrayIndex++;
+    }
+    if (name1 == MATEO || name2 == MATEO || name3 == MATEO) {
+
+        lcdShownArray[arrayIndex] = lcdArray[MATEO];
+        arrayIndex++;
+    }
+    for (; arrayIndex < DISPLAYS; arrayIndex++) {       //Lleno los que no se llamaron con NULL
+
+        lcdShownArray[arrayIndex] = NULL;
+    }
+
+
+    for (int i = 0; i < DISPLAYS; i++) {
+
+        if (lcdShownArray[i] != NULL) {
+            
+            lcdShownArray[i]->lcdClear();
+
+            *(lcdShownArray[i]) << (tweets[actualTweet * 2]).c_str();   //Imprimo la primera linea
+
+            *(lcdShownArray[i]) << ' ';
+            
+            tweetprint = (tweets[actualTweet * 2 + 1]).substr(tweetShownOFFSET, 16);    //Imprimo la 2da linea y la voy corriendo
+
+            *(lcdShownArray[i]) << tweetprint.c_str();
+
+            if (tweetprint[15] == '\0') {
+                
+                salida = 1;
+                tweetShownOFFSET = 0;
+                actualTweet++;
+
+            }
+        }
+    }
+
+    return salida;
 }

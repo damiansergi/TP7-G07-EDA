@@ -9,24 +9,33 @@
 #include "imgui.h"
 #include "imgui_impl_allegro5.h"
 
+#include <vector>
+
 #include "Tweet.h"
 #include "basicLCD.h"
 
 #define DISPLAYS 3
+#define FRAMESREFERENCE 250
 
-enum LCDORDER {DAMIAN = 0, KEVIN, MATEO};
+enum LCDNAME {DAMIAN = 0, KEVIN, MATEO, DONTSHOW};
 
-enum DisplayState {STOP_RUNNING, USERNAMEINPUT, DOWNLOADINGTWEETS, SHOWINGTWEETS, };
+enum DisplayState {STOP_RUNNING = 0, USERNAMEINPUT, DOWNLOADINGTWEETS, SHOWINGTWEETS, TRANSFORMINGTWEETS};
 
 class Gui {
 public:
 
+	//Methods
 	Gui(int height, int width);
 	~Gui();
 	void setup();
-	DisplayState functions(DisplayState estado);
+
+	DisplayState functions(DisplayState estado, vector<string>& tweets);
+	int printInDisplay(LCDNAME name1, LCDNAME name2, LCDNAME name3, vector<string>& tweets);
 	void setLCDArray(int index, basicLCD* lcd);
 
+	//Variables
+	int numberOfTweets;
+	std::string username;
 
 
 private:
@@ -36,14 +45,16 @@ private:
 
 	char bufUsername[MAXIMUM_USERNAME_LENGTH + 1] = { 0 };      //Maximum length of a name is 15 characters long
 	char bufNumberOfTweets[MAXIMUM_TWEETS_DIGITS + 1] = { 0 };
-	int numberOfTweets;
-	std::string username;
 
 	float speed = 0.5;  //Varia entre 0 y 1
 
 	bool checkbox_lcdDAMI_selected;
     bool checkbox_lcdKEVIN_selected;
     bool checkbox_lcdMATEO_selected;
+
+	int tweetShownOFFSET;
+	int actualTweet;
+	int framesCounter;
 
 	basicLCD * lcdArray[DISPLAYS];
 };
