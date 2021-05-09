@@ -8,7 +8,7 @@
 class getTweet {
 public:
 
-	int getTweets(std::string account, int number_of_tweets, Gui& gui);
+	int getTweets(std::string account, Gui& gui, int number_of_tweets);
 	std::list<std::string> getinfo();
 private:
 	void saveNames(std::string account);

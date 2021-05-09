@@ -147,6 +147,7 @@
     <ClCompile Include="imgui_impl_allegro5.cpp" />
     <ClCompile Include="imgui_tables.cpp" />
     <ClCompile Include="imgui_widgets.cpp" />
+    <ClCompile Include="kevinLCD.cpp" />
     <ClCompile Include="LCDgui.cpp" />
     <ClCompile Include="LCD_Lucas.cpp" />
     <ClCompile Include="libCurlExternal.cpp" />
@@ -164,12 +165,17 @@
     <ClInclude Include="imstb_textedit.h" />
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="jsonExternal.hpp" />
+    <ClInclude Include="kevinLCD.h" />
     <ClInclude Include="LCD_Lucas.h" />
     <ClInclude Include="libCurlExternal.h" />
     <ClInclude Include="Tweet.h" />
   </ItemGroup>
   <ItemGroup>
+    <Font Include="img\Sans.ttf" />
     <Font Include="LiberationSerif-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="img\background.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -14,7 +14,7 @@ using json = nlohmann::json;
 size_t myCallback(void* contents, size_t size, size_t nmemb, void* userp);
 
 
-int getTweet::getTweets(std::string account, int number_of_tweets, Gui& gui)
+int getTweet::getTweets(std::string account, Gui& gui, int number_of_tweets=10)
 {
 	std::vector<std::string> tweets; //Dummy para llamar a state.functions
 
@@ -205,6 +205,7 @@ int getTweet::getTweets(std::string account, int number_of_tweets, Gui& gui)
 		{
 			//Muestro si hubo un error de la libreria
 			std::cerr << e.what() << std::endl;
+			return -1;
 		}
 	}
 	else
@@ -230,15 +231,15 @@ void getTweet::saveNames(std::string account)
 		//std::cout << d << std::endl;
 		//std::cout << h << std::endl;
 		//std::cout << min << std::endl;
-		if (!strcmp(m.c_str(), "Jan")) m2 = "1";
-		if (!strcmp(m.c_str(), "Feb")) m2 = "2";
-		if (!strcmp(m.c_str(), "Mar")) m2 = "3";
-		if (!strcmp(m.c_str(), "Apr")) m2 = "4";
-		if (!strcmp(m.c_str(), "May")) m2 = "5";
-		if (!strcmp(m.c_str(), "Jun")) m2 = "6";
-		if (!strcmp(m.c_str(), "Jul")) m2 = "7";
-		if (!strcmp(m.c_str(), "Aug")) m2 = "8";
-		if (!strcmp(m.c_str(), "Sep")) m2 = "9";
+		if (!strcmp(m.c_str(), "Jan")) m2 = "01";
+		if (!strcmp(m.c_str(), "Feb")) m2 = "02";
+		if (!strcmp(m.c_str(), "Mar")) m2 = "03";
+		if (!strcmp(m.c_str(), "Apr")) m2 = "04";
+		if (!strcmp(m.c_str(), "May")) m2 = "05";
+		if (!strcmp(m.c_str(), "Jun")) m2 = "06";
+		if (!strcmp(m.c_str(), "Jul")) m2 = "07";
+		if (!strcmp(m.c_str(), "Aug")) m2 = "08";
+		if (!strcmp(m.c_str(), "Sep")) m2 = "09";
 		if (!strcmp(m.c_str(), "Oct")) m2 = "10";
 		if (!strcmp(m.c_str(), "Nov")) m2 = "11";
 		if (!strcmp(m.c_str(), "Dec")) m2 = "12";
