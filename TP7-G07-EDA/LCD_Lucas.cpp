@@ -5,7 +5,7 @@ LCD_Lucas::LCD_Lucas()
 {
 
 	//ALLEGRO_DISPLAY* disp = al_create_display(DISPLAY_W, DISPLAY_H);
-	//ALLEGRO_FONT* font = al_create_builtin_font();
+	ALLEGRO_FONT* font = al_create_builtin_font();
 	this->cursor.column = 0;
 	this->cursor.row = 0;
 	this->initError = 0;
@@ -19,7 +19,7 @@ LCD_Lucas::LCD_Lucas()
 }
 LCD_Lucas::~LCD_Lucas()
 {
-	al_destroy_display(display);
+	//al_destroy_display(display);
 }
 
 cursorPosition LCD_Lucas::lcdGetCursorPosition()

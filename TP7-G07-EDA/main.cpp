@@ -67,6 +67,11 @@ int main(int, char**)
 
             state = gui.functions(state, tweets);
         }
+        else if (state == ULTIMOTWEET) {
+
+            gui.clearFrameCounter();
+            state = gui.functions(state, tweets);
+        }
     }
 
     return 0;

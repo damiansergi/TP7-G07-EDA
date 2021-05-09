@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <vector>
+#include <Windows.h>
 
 using namespace std;
 
@@ -36,8 +37,12 @@ Gui::Gui(int height, int width) {
     speed = 0.5;
     tweetShownOFFSET = 0;
     actualTweet = 0;
+    pauseIndicator = true;
+    framesCounter = 0;
 
-    framesCounter = 0.5 * FRAMESREFERENCE;
+    checkbox_lcdDAMI_selected = false;
+    checkbox_lcdKEVIN_selected = false;
+    checkbox_lcdMATEO_selected = false;
 }
 
 Gui::~Gui() {
@@ -71,7 +76,7 @@ DisplayState Gui::functions(DisplayState estado, vector<string>& tweets) {
 
     LCDNAME name1 = DAMIAN;   //This variables will tell which displays are shown
     LCDNAME name2 = KEVIN;
-    LCDNAME name3 = DONTSHOW;
+    LCDNAME name3 = MATEO;
 
     vector<string> tempVector;
     string tempString;
@@ -129,45 +134,52 @@ DisplayState Gui::functions(DisplayState estado, vector<string>& tweets) {
 
         tempString = string("@") + username;
 
-        for (int i = 1 + username.length(); i <= 16; i++) {
+        for (int i = 1 + username.length(); i < 16; i++) {
 
             tempString.append(" ");
         }
 
         tempVector.push_back(tempString);
 
-        if (framesCounter <= 15) {
+        if (framesCounter <= 100) {
 
             tempString = string("DOWNLOADING  ...");
         }
-        else if (framesCounter <= 30) {
+        else if (framesCounter <= 200) {
 
             tempString = string("DOWNLOADING  .. ");
         }
-        else if (framesCounter <= 45) {
+        else if (framesCounter <= 300) {
 
             tempString = string("DOWNLOADING  .  ");
         }
-        else {
+        else if (framesCounter <= 400) {
 
-            tempString = string("DOWNLOADING  .. ");
-            framesCounter = -15;
+            framesCounter = 0;
         }
+
 
         tempVector.push_back(tempString);
 
-        moveTweet = printInDisplay(DAMIAN, KEVIN, DONTSHOW, tempVector);
+        moveTweet = printInDisplay(DAMIAN, KEVIN, MATEO, tempVector);
 
         ImGui::Begin("Cancel Download");
 
         if (ImGui::Button("Cancel")) {
 
             salida = STOP_RUNNING;
+            framesCounter = 0;
         }
 
         ImGui::End();
     }
     else if (estado == SHOWINGTWEETS) {
+
+        if (pauseIndicator == true && framesCounter == 1 && tweetShownOFFSET == 0) {
+
+            Sleep(PAUSA_PRUDENCIA);
+            pauseIndicator = false;
+        }
 
         framesCounter++;
 
@@ -194,36 +206,39 @@ DisplayState Gui::functions(DisplayState estado, vector<string>& tweets) {
 
         moveTweet = printInDisplay(name1, name2, name3, tweets);
 
-        if (framesCounter >= (int)(FRAMESREFERENCE * (1 - speed))) {    //Actualizacion del programa
+        if (framesCounter >= (int)(FRAMESREFERENCE * (1.01 - speed))) {    //Actualizacion del programa
 
             tweetShownOFFSET++;
             if (moveTweet) {
                 actualTweet++;
+                tweetShownOFFSET = 0;
+                pauseIndicator = true;
+                if (actualTweet >= numberOfTweets) {
 
-                al_rest(PAUSA_PRUDENCIA);
-
-                if (actualTweet > numberOfTweets - 1) {
-                    
-
-
-                    actualTweet = 0;
+                    salida = ULTIMOTWEET;
                 }
             }
             framesCounter = 0;
 
         }
         if (ImGui::Button("Reshow Tweet")) {
+            pauseIndicator = true;
+            framesCounter = 0;
             tweetShownOFFSET = 0;
         }
         if (ImGui::Button("Jump to Previous Tweet")) {
-            if (actualTweet < numberOfTweets - 1) {
-                actualTweet++;
+            if (actualTweet > 1) {
+                pauseIndicator = true;
+                framesCounter = 0;
+                actualTweet--;
                 tweetShownOFFSET = 0;
             }
         }
         if (ImGui::Button("Jump to Next Tweet")) {
-            if (actualTweet > 1 ) {
-                actualTweet--;
+            if (actualTweet < numberOfTweets - 1) {
+                pauseIndicator = true;
+                framesCounter = 0;
+                actualTweet++;
                 tweetShownOFFSET = 0;
             }
         }
@@ -240,9 +255,35 @@ DisplayState Gui::functions(DisplayState estado, vector<string>& tweets) {
         tempString = string("   INPUT AGAIN  ");
         tempVector.push_back(tempString);
 
-        printInDisplay(DAMIAN, DONTSHOW, DONTSHOW, tempVector);
+        printInDisplay(DAMIAN, KEVIN, MATEO, tempVector);
 
         salida = USERNAMEINPUT;
+    }
+    else if (estado == ULTIMOTWEET) {
+
+        bool opcion1 = false;
+        bool opcion2 = false;
+        actualTweet = 0;
+
+        ImGui::Begin("Last Tweet");
+        ImGui::Text("Select what to do know"); 
+
+        if (ImGui::Button("Enter new username and tweet count")) {
+            salida = USERNAMEINPUT;
+        }
+
+        if (ImGui::Button("Reshow tweets from the first one")) {
+            salida = SHOWINGTWEETS;
+        }
+
+        tempString = string("   LAST TWEET   ");
+        tempVector.push_back(tempString);
+        tempString = string("What to do now? ");
+        tempVector.push_back(tempString);
+
+        printInDisplay(DAMIAN, KEVIN, MATEO, tempVector);
+
+        ImGui::End();
     }
 
     // Rendering
@@ -301,12 +342,14 @@ int Gui::printInDisplay(LCDNAME name1, LCDNAME name2, LCDNAME name3, vector<stri
             if (tweetprint[15] == '\0') {
                 
                 salida = 1;
-                tweetShownOFFSET = 0;
-                actualTweet++;
-
             }
         }
     }
 
     return salida;
+}
+
+void Gui::clearFrameCounter() {
+
+    framesCounter = 0;
 }
