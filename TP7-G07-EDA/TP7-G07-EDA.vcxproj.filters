@@ -51,6 +51,9 @@
     <ClCompile Include="LCD_Lucas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="kevinLCD.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="jsonExternal.hpp">
@@ -95,10 +98,21 @@
     <ClInclude Include="LCD_Lucas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="kevinLCD.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Font Include="LiberationSerif-Regular.ttf">
       <Filter>Resource Files</Filter>
     </Font>
+    <Font Include="img\Sans.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="img\background.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

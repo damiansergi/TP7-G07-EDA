@@ -1,34 +1,14 @@
-#ifndef basicLCD_H
+#ifndef _KEVIN_LCD_
+#define _KEVIN_LCD_ 
 
-#define basicLCD_H
-
+#include "basicLCD.h"
 #include <string>
-#include <iostream>
 
-using namespace std;
-
-struct cursorPosition{
-	int row;
-	int column;
-};
+#define	D_WIDTH 536
+#define D_HEIGHT 281
 
 
-class lcdError
-{
-public:
-	lcdError(std::string name, std::string desc, unsigned long code);
-	std::string getErrorName();
-	std::string getErrorDescription();
-	unsigned long getErrorCode();
-
-private:
-	std::string name;
-	std::string description;
-	unsigned long code;
-};
-
-
-class basicLCD
+class KevinLCD : public basicLCD
 {
 public:
 
@@ -40,19 +20,16 @@ public:
 	*
 	* cadd =1 (cursor address) (ver NOTA 1)
 	*=====================================================*/
-
-	basicLCD();
+	KevinLCD();
 
 	/*=====================================================
 	* Name: ~basicLCD
 	* Entra: -
-	4/22
 	* Resulta: Destructor de la clase. Libera cualquier recurso
 	* que se hubiera tomado de forma de evitar
 	* "resources leak".
 	*=====================================================*/
-
-	~basicLCD();
+	~KevinLCD();
 
 	/*=====================================================
 	* Name: lcdInitOk
@@ -62,7 +39,7 @@ public:
 	* correctamente (el constructor no tuvo errores) o “false
 	* en caso contrario.
 	*=====================================================*/
-	virtual bool lcdInitOk() = 0;
+	virtual bool lcdInitOk();
 
 	/*=====================================================
 	* Name: lcdGetError
@@ -70,19 +47,17 @@ public:
 	* Resulta: No genera ningún cambio en el display.
 	* Devuelve en su nombre un lcdError&
 	*=====================================================*/
-	virtual lcdError& lcdGetError() = 0;
-
+	virtual lcdError& lcdGetError();
 
 	/*=====================================================
 	* Name: lcdClear
 	* Entra: -
-	* Resulta: Borra el display y el cursor va a HOME
+	* Resulta: Borra el0 display y el cursor va a HOME
 	*
 	* Devuelve en su nombre “true” si fue satisfactoria “false”
 	* en caso contrario.
 	*=====================================================*/
-	virtual bool lcdClear() = 0;
-
+	virtual bool lcdClear();
 
 	/*=====================================================
 	* Name: lcdClearToEOL
@@ -93,8 +68,7 @@ public:
 	* Devuelve en su nombre “true” si fue satisfactoria “false”
 	* en caso contrario.
 	*=====================================================*/
-	virtual bool lcdClearToEOL() = 0;
-
+	virtual bool lcdClearToEOL();
 
 	/*=====================================================
 	* Name: operator<<()
@@ -109,7 +83,7 @@ public:
 	* basicLCD lcd;
 	* lcd << ‘a’ << ‘b’ << ‘c’;
 	*=====================================================*/
-	virtual basicLCD& operator<<(const unsigned char c) = 0;
+	virtual basicLCD& operator<<(const char c);
 
 	/*=====================================================
 	* Name: operator<<()
@@ -124,7 +98,7 @@ public:
 	* basicLCD lcd;
 	* lcd << “Hola” << “ “ << “Mundo”;
 	*=====================================================*/
-	virtual basicLCD& operator<<(const char* c) = 0;
+	virtual basicLCD& operator<<(const char* c);
 
 	/*=====================================================
 	* Name: lcdMoveCursorUp
@@ -136,7 +110,7 @@ public:
 	* Devuelve en su nombre “true” si fue satisfactoria “false”
 	* en caso contrario.
 	*=====================================================*/
-	virtual bool lcdMoveCursorUp() = 0;
+	virtual bool lcdMoveCursorUp();
 
 	/*=====================================================
 	* Name: lcdMoveCursorDown
@@ -148,7 +122,7 @@ public:
 	* Devuelve en su nombre “true” si fue satisfactoria “false”
 	* en caso contrario.
 	*=====================================================*/
-	virtual bool lcdMoveCursorDown() = 0;
+	virtual bool lcdMoveCursorDown();
 
 	/*=====================================================
 	* Name: lcdMoveCursorRight
@@ -159,8 +133,8 @@ public:
 	* Devuelve en su nombre “true” si fue satisfactoria “false”
 	* en caso contrario.
 	*=====================================================*/
+	virtual bool lcdMoveCursorRight();
 
-	virtual bool lcdMoveCursorRight() = 0;
 	/*=====================================================
 	* Name: lcdMoveCursorLeft
 	*
@@ -170,8 +144,7 @@ public:
 	* Devuelve en su nombre “true” si fue satisfactoria “false”
 	* en caso contrario.
 	*=====================================================*/
-	virtual bool lcdMoveCursorLeft() = 0;
-
+	virtual bool lcdMoveCursorLeft();
 
 	/*=====================================================
 	* Name: lcdSetCursorPosition
@@ -183,7 +156,7 @@ public:
 	* Devuelve en su nombre “true” si fue satisfactoria “false”
 	* en caso contrario.
 	*=====================================================*/
-	virtual bool lcdSetCursorPosition(const cursorPosition pos) = 0;
+	virtual bool lcdSetCursorPosition(const cursorPosition pos);
 
 	/*=====================================================
 	* Name: lcdGetCursorPosition
@@ -193,7 +166,12 @@ public:
 	*
 	* Devuelve una estructura tipo cursorPosition
 	*=====================================================*/
-	virtual cursorPosition lcdGetCursorPosition() = 0;
+	virtual cursorPosition lcdGetCursorPosition();
+private:
+	cursorPosition cursor;
+	lcdError myerror;
+	std::string str;
+
 };
 
-#endif // !basicLCD_H
+#endif // _KEVIN_LCD_
