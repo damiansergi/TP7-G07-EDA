@@ -18,6 +18,7 @@ int main(int, char**)
     LCD_Lucas LCDLucas;
     basicLCD* lcdArray[DISPLAYS] = { &LCDDamian, &LCDLucas, NULL };
     std::vector<std::string> tweets;
+    int error = 0;
 
     for (int i = 0; i < DISPLAYS; i++) {
 
@@ -27,7 +28,6 @@ int main(int, char**)
     gui.setup();
 
     DisplayState state = USERNAMEINPUT; //We begin reading the username and number of tweets that will be read
-
 
     // Main loop
 
@@ -39,8 +39,16 @@ int main(int, char**)
         }
         else if (state == DOWNLOADINGTWEETS) {
 
-            tweet.getTweets(gui.username, gui.numberOfTweets, gui);
-            state = TRANSFORMINGTWEETS;
+            error = tweet.getTweets(gui.username, gui, gui.numberOfTweets);
+
+            if (error == 1) {
+
+                state = gui.functions(state, tweets);
+            }
+            else {
+
+                state = TRANSFORMINGTWEETS;
+            }
         }
         else if (state == TRANSFORMINGTWEETS) {
 

@@ -68,7 +68,8 @@ DisplayState Gui::functions(DisplayState estado, vector<string>& tweets) {
     LCDNAME name2 = DONTSHOW;
     LCDNAME name3 = DONTSHOW;
 
-    vector<string> ultimoTweet;
+    vector<string> tempVector;
+    string tempString;
 
     int moveTweet = 0;
 
@@ -115,9 +116,33 @@ DisplayState Gui::functions(DisplayState estado, vector<string>& tweets) {
 
         ImGui::End();
     }
-    else if (estado == DOWNLOADINGTWEETS){
+    else if (estado == DOWNLOADINGTWEETS) {
 
-        //TODO: Mostramos en el display que se estan descargando los datos
+        framesCounter++;
+
+        tempString = string("@") + username;
+        tempVector.push_back(tempString);
+
+        if (framesCounter <= 15) {
+
+            tempString = string("DOWNLOADING  ...");
+        }
+        else if (framesCounter <= 30) {
+
+            tempString = string("DOWNLOADING  .. ");
+        }
+        else if (framesCounter <= 45) {
+
+            tempString = string("DOWNLOADING  .  ");
+        }
+        else if (framesCounter <= 60) {
+
+            tempString = string("DOWNLOADING  .. ");
+        }
+
+        tempVector.push_back(tempString);
+
+        moveTweet = printInDisplay(DAMIAN, DONTSHOW, DONTSHOW, tempVector);
 
         ImGui::Begin("Cancel Download");
 
@@ -182,6 +207,19 @@ DisplayState Gui::functions(DisplayState estado, vector<string>& tweets) {
 
         ImGui::End();
     }
+    else if (estado == ERROR) {
+
+        tempString = string("ERROR");
+        tempVector.push_back(tempString);
+        tempString = string("ERROR");
+        tempVector.push_back(tempString);
+
+        printInDisplay(DAMIAN, DONTSHOW, DONTSHOW, tempVector);
+
+        al_rest(5);
+
+        salida = USERNAMEINPUT;
+    }
 
     // Rendering
     ImGui::Render();
@@ -231,8 +269,6 @@ int Gui::printInDisplay(LCDNAME name1, LCDNAME name2, LCDNAME name3, vector<stri
             lcdShownArray[i]->lcdClear();
 
             *(lcdShownArray[i]) << (tweets[actualTweet * 2]).c_str();   //Imprimo la primera linea
-
-            *(lcdShownArray[i]) << ' ';
             
             tweetprint = (tweets[actualTweet * 2 + 1]).substr(tweetShownOFFSET, 16);    //Imprimo la 2da linea y la voy corriendo
 
