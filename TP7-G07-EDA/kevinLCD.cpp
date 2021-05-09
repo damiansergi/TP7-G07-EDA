@@ -23,18 +23,16 @@
 #define Y_OFFSET 35
 #define INIT_Y_POS 90
 
-#define MOVE_X 30
-#define MOVE_Y 30
+#define MOVE_X 600
+#define MOVE_Y 230
 
 /*ERROR CODES*/
 enum ERROR { KEYBOARD_ERROR = 1, DISPLAY_ERROR, IMAGE_ERROR, EVENT_QUEUE_ERROR, FONT_ERROR, CURSOR_SET, CURSOR_UP, CURSOR_DOWN, CURSOR_LEFT, CURSOR_RIGHT, CURSOR_STILL_RIGHT };
 
 
-ALLEGRO_DISPLAY* display = NULL;
-ALLEGRO_EVENT_QUEUE* event_queue = NULL;
 ALLEGRO_BITMAP* img = NULL;
 ALLEGRO_FONT* font = NULL;
-ALLEGRO_COLOR letter = al_map_rgb(34, 46, 32);
+ALLEGRO_COLOR letter = al_map_rgb(0, 0, 0);
 
 using namespace std;
 
@@ -67,16 +65,17 @@ bool KevinLCD::lcdInitOk()
         return false;
     }
 
-    /*
-    al_init_font_addon(); // initialize the font addon
-    al_init_ttf_addon(); // initialize the ttf (True Type Font) addon
-    */
+    
+    //al_init_font_addon(); // initialize the font addon
+    //al_init_ttf_addon(); // initialize the ttf (True Type Font) addon
+    
     font = al_load_ttf_font(SANS, TEXT_SIZE, 0);
     if (!font) {
         this->myerror = lcdError("Allegro", "Could not load 'Sans.ttf", FONT_ERROR);
         /*
         al_destroy_event_queue(event_queue);
         */
+        cout << "error" << endl;
         al_destroy_bitmap(img);
         return false;
     }
@@ -112,7 +111,7 @@ bool KevinLCD::lcdClear() {
     str.resize(0, ' ');             // Borro el string
     str.resize(COLUMN * ROW, ' ');
     al_draw_bitmap(img, 0+MOVE_X, 0+MOVE_Y, 0);
-    al_flip_display();
+    //al_flip_display();
     cursor.column = 1;              // Reseteo el cursor
     cursor.row = 1;
     return true;
@@ -138,17 +137,17 @@ basicLCD& KevinLCD::operator<<(const unsigned char c) {
     for (int j = 0; j < ROW; j++) {
         if (j == ROW - 1) {
             for (int i = 0; i < COLUMN; i++) {      // Caso segunda columna
-                al_draw_textf(font, letter, INIT_X_POS + i * X_OFFSET+MOVE_X, INIT_Y_POS + Y_OFFSET + MOVE_Y, ALLEGRO_ALIGN_CENTER, "%c", str[i + COLUMN]);
+                al_draw_textf(font, al_map_rgb(0, 0, 0), INIT_X_POS + i * X_OFFSET+MOVE_X, INIT_Y_POS + Y_OFFSET + MOVE_Y, ALLEGRO_ALIGN_CENTER, "%c", str[i + COLUMN]);
             }
         }
         else {
             for (int i = 0; i < COLUMN; i++) {      // Caso primera columna
-                al_draw_textf(font, letter, INIT_X_POS + i * X_OFFSET + MOVE_X, INIT_Y_POS + MOVE_Y, ALLEGRO_ALIGN_CENTER, "%c", str[i]);
+                al_draw_textf(font, al_map_rgb(0, 0, 0), INIT_X_POS + i * X_OFFSET + MOVE_X, INIT_Y_POS + MOVE_Y, ALLEGRO_ALIGN_CENTER, "%c", str[i]);
             }
         }
     }
     lcdMoveCursorRight();
-    al_flip_display();
+    //al_flip_display();
     //al_rest(1.0 / FPS);
     return *this;
 
@@ -161,6 +160,10 @@ basicLCD& KevinLCD::operator<<(const char* c) {
     if (myerror.getErrorCode() == CURSOR_RIGHT) {
         this->myerror = lcdError("Cursor", "Can´t move cursor right", CURSOR_STILL_RIGHT);
     }
+    //al_draw_text(font, al_map_rgb(0, 0, 0), 10, 10, 0, "hola");
+    //al_flip_display();
+    //cout << "aca" << endl;
+    //while (1);
     return *this;
 }
 
