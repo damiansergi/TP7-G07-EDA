@@ -5,6 +5,7 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_color.h>
+#include <allegro5/allegro_image.h>
 
 #include "imgui.h"
 #include "imgui_impl_allegro5.h"

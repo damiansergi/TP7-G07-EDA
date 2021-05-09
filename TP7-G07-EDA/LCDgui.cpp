@@ -26,6 +26,9 @@ Gui::Gui(int height, int width) {
 
         cout << "failed to initialize allegro ttf!\n" << endl;
     }
+    if (!al_init_image_addon()) {       // ADDON necesario para manejo de imagenes 
+        cout << "Failed to initialize image addon!" << endl;
+    }
 
     numberOfTweets = 0;
     speed = 0.5;
@@ -141,15 +144,15 @@ DisplayState Gui::functions(DisplayState estado, vector<string>& tweets) {
 
             tempString = string("DOWNLOADING  .  ");
         }
-        else if (framesCounter <= 60) {
+        else {
 
             tempString = string("DOWNLOADING  .. ");
-            framesCounter = 0;
+            framesCounter = -15;
         }
 
         tempVector.push_back(tempString);
 
-        moveTweet = printInDisplay(DAMIAN, KEVIN, DONTSHOW, tempVector);
+        moveTweet = printInDisplay(DAMIAN, DONTSHOW, DONTSHOW, tempVector);
 
         ImGui::Begin("Cancel Download");
 
@@ -221,7 +224,7 @@ DisplayState Gui::functions(DisplayState estado, vector<string>& tweets) {
         tempString = string("ERROR           ");
         tempVector.push_back(tempString);
 
-        printInDisplay(DAMIAN, KEVIN, DONTSHOW, tempVector);
+        printInDisplay(DAMIAN, DONTSHOW, DONTSHOW, tempVector);
 
         salida = USERNAMEINPUT;
     }
