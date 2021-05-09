@@ -23,6 +23,9 @@
 #define Y_OFFSET 35
 #define INIT_Y_POS 90
 
+#define MOVE_X 30
+#define MOVE_Y 30
+
 /*ERROR CODES*/
 enum ERROR { KEYBOARD_ERROR = 1, DISPLAY_ERROR, IMAGE_ERROR, EVENT_QUEUE_ERROR, FONT_ERROR, CURSOR_SET, CURSOR_UP, CURSOR_DOWN, CURSOR_LEFT, CURSOR_RIGHT, CURSOR_STILL_RIGHT };
 
@@ -50,17 +53,9 @@ bool KevinLCD::lcdInitOk() {
         return false;
     }
 
-    display = al_create_display(D_WIDTH, D_HEIGHT);
-
-    if (!display) {
-        this->myerror = lcdError("Allegro", "Failed to create display!", DISPLAY_ERROR);
-        al_destroy_event_queue(event_queue);
-        return false;
-    }
     img = al_load_bitmap(IMG);
     if (!img) {
         this->myerror = lcdError("Allegro", "Failed to load image!", IMAGE_ERROR);
-        al_destroy_display(display);
         al_destroy_event_queue(event_queue);
         return false;
     }
@@ -70,7 +65,6 @@ bool KevinLCD::lcdInitOk() {
     font = al_load_ttf_font(SANS, TEXT_SIZE, 0);
     if (!font) {
         this->myerror = lcdError("Allegro", "Could not load 'Sans.ttf", FONT_ERROR);
-        al_destroy_display(display);
         al_destroy_event_queue(event_queue);
         al_destroy_bitmap(img);
         return false;
@@ -89,7 +83,7 @@ KevinLCD::KevinLCD() :myerror("No error", "No error", 0) {  // Inicializacion
 };
 
 KevinLCD::~KevinLCD() {
-    al_destroy_display(display); //Destruir recursor empleados 
+    //Destruir recursor empleados 
     al_destroy_event_queue(event_queue);
     al_destroy_bitmap(img);
     al_destroy_font(font);
@@ -102,7 +96,7 @@ lcdError& KevinLCD::lcdGetError() {
 bool KevinLCD::lcdClear() {
     str.resize(0, ' ');             // Borro el string
     str.resize(COLUMN * ROW, ' ');
-    al_draw_bitmap(img, 0, 0, 0);
+    al_draw_bitmap(img, 0+MOVE_X, 0+MOVE_Y, 0);
     al_flip_display();
     cursor.column = 1;              // Reseteo el cursor
     cursor.row = 1;
@@ -112,14 +106,14 @@ bool KevinLCD::lcdClear() {
 bool KevinLCD::lcdClearToEOL() {
     str.resize(cursor.column + (cursor.row - 1) * COLUMN - 1, ' ');     // Borro el string desde el cursor
     str.resize(COLUMN * ROW, ' ');                                      // y lo completo con espacios
-    al_draw_bitmap(img, 0, 0, 0);
+    al_draw_bitmap(img, 0 + MOVE_X, 0 + MOVE_Y, 0);
     *this << ' ';
     lcdMoveCursorLeft();
     return true;
 }
 
 basicLCD& KevinLCD::operator<<(const char c) {
-    al_draw_bitmap(img, 0, 0, 0);
+    al_draw_bitmap(img, 0+MOVE_X, 0+MOVE_Y, 0);
     if ((cursor.column + (cursor.row - 1) * COLUMN >= ROW * COLUMN) && (myerror.getErrorCode() == CURSOR_RIGHT)) {  //Caso en el que el cursor se encuentra al final de todo
         for (int i = 0; i < ROW * COLUMN - 1; i++) {
             str[i] = str[i + 1];
@@ -129,12 +123,12 @@ basicLCD& KevinLCD::operator<<(const char c) {
     for (int j = 0; j < ROW; j++) {
         if (j == ROW - 1) {
             for (int i = 0; i < COLUMN; i++) {      // Caso segunda columna
-                al_draw_textf(font, letter, INIT_X_POS + i * X_OFFSET, INIT_Y_POS + Y_OFFSET, ALLEGRO_ALIGN_CENTER, "%c", str[i + COLUMN]);
+                al_draw_textf(font, letter, INIT_X_POS + i * X_OFFSET+MOVE_X, INIT_Y_POS + Y_OFFSET + MOVE_Y, ALLEGRO_ALIGN_CENTER, "%c", str[i + COLUMN]);
             }
         }
         else {
             for (int i = 0; i < COLUMN; i++) {      // Caso primera columna
-                al_draw_textf(font, letter, INIT_X_POS + i * X_OFFSET, INIT_Y_POS, ALLEGRO_ALIGN_CENTER, "%c", str[i]);
+                al_draw_textf(font, letter, INIT_X_POS + i * X_OFFSET + MOVE_X, INIT_Y_POS + MOVE_Y, ALLEGRO_ALIGN_CENTER, "%c", str[i]);
             }
         }
     }
