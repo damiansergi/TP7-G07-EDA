@@ -83,7 +83,7 @@ public:
 	* basicLCD lcd;
 	* lcd << ‘a’ << ‘b’ << ‘c’;
 	*=====================================================*/
-	virtual basicLCD& operator<<(const char c);
+	virtual basicLCD& operator<<(const unsigned char c);
 
 	/*=====================================================
 	* Name: operator<<()

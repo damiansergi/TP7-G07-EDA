@@ -65,7 +65,7 @@ void Gui::setup() {
 DisplayState Gui::functions(DisplayState estado, vector<string>& tweets) {
 
     LCDNAME name1 = DAMIAN;   //This variables will tell which displays are shown
-    LCDNAME name2 = DONTSHOW;
+    LCDNAME name2 = KEVIN;
     LCDNAME name3 = DONTSHOW;
 
     vector<string> tempVector;
@@ -121,6 +121,12 @@ DisplayState Gui::functions(DisplayState estado, vector<string>& tweets) {
         framesCounter++;
 
         tempString = string("@") + username;
+
+        for (int i = 1 + username.length(); i <= 16; i++) {
+
+            tempString.append(' ', 1);
+        }
+
         tempVector.push_back(tempString);
 
         if (framesCounter <= 15) {
@@ -138,11 +144,12 @@ DisplayState Gui::functions(DisplayState estado, vector<string>& tweets) {
         else if (framesCounter <= 60) {
 
             tempString = string("DOWNLOADING  .. ");
+            framesCounter = 0;
         }
 
         tempVector.push_back(tempString);
 
-        moveTweet = printInDisplay(DAMIAN, DONTSHOW, DONTSHOW, tempVector);
+        moveTweet = printInDisplay(DAMIAN, KEVIN, DONTSHOW, tempVector);
 
         ImGui::Begin("Cancel Download");
 
@@ -207,16 +214,14 @@ DisplayState Gui::functions(DisplayState estado, vector<string>& tweets) {
 
         ImGui::End();
     }
-    else if (estado == ERROR) {
+    else if (estado == PRINTERROR) {
 
-        tempString = string("ERROR");
+        tempString = string("ERROR           ");
         tempVector.push_back(tempString);
-        tempString = string("ERROR");
+        tempString = string("ERROR           ");
         tempVector.push_back(tempString);
 
-        printInDisplay(DAMIAN, DONTSHOW, DONTSHOW, tempVector);
-
-        al_rest(5);
+        printInDisplay(DAMIAN, KEVIN, DONTSHOW, tempVector);
 
         salida = USERNAMEINPUT;
     }

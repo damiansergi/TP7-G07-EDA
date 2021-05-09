@@ -38,39 +38,52 @@ ALLEGRO_COLOR letter = al_map_rgb(34, 46, 32);
 
 using namespace std;
 
-bool KevinLCD::lcdInitOk() {
+bool KevinLCD::lcdInitOk()
+{
     /*INICIALIZACION DE TECLADO*/
+    /*
     if (!al_install_keyboard()) {
         this->myerror = lcdError("Allegro", "Failed to initialize the keyboard!", KEYBOARD_ERROR);
         return false;
     }
+    */
 
     /*INICIALIZACION DE EVENTOS*/
+    /*
     event_queue = al_create_event_queue();
 
     if (!event_queue) {
         this->myerror = lcdError("Allegro", "Failed to create event_queue!", EVENT_QUEUE_ERROR);
         return false;
     }
+    */
 
     img = al_load_bitmap(IMG);
     if (!img) {
         this->myerror = lcdError("Allegro", "Failed to load image!", IMAGE_ERROR);
+        /*
         al_destroy_event_queue(event_queue);
+        */
         return false;
     }
 
+    /*
     al_init_font_addon(); // initialize the font addon
     al_init_ttf_addon(); // initialize the ttf (True Type Font) addon
+    */
     font = al_load_ttf_font(SANS, TEXT_SIZE, 0);
     if (!font) {
         this->myerror = lcdError("Allegro", "Could not load 'Sans.ttf", FONT_ERROR);
+        /*
         al_destroy_event_queue(event_queue);
+        */
         al_destroy_bitmap(img);
         return false;
     }
+    /*
     al_register_event_source(event_queue, al_get_display_event_source(display));
     al_register_event_source(event_queue, al_get_keyboard_event_source()); //REGISTRAMOS EL TECLADO
+    */
 
     return true;
 }
@@ -80,11 +93,13 @@ KevinLCD::KevinLCD() :myerror("No error", "No error", 0) {  // Inicializacion
     cursor.row = 1;
     str = "";
     str.resize(COLUMN * ROW, ' ');
+
+    lcdInitOk();
 };
 
 KevinLCD::~KevinLCD() {
     //Destruir recursor empleados 
-    al_destroy_event_queue(event_queue);
+    //al_destroy_event_queue(event_queue);
     al_destroy_bitmap(img);
     al_destroy_font(font);
 }
@@ -112,7 +127,7 @@ bool KevinLCD::lcdClearToEOL() {
     return true;
 }
 
-basicLCD& KevinLCD::operator<<(const char c) {
+basicLCD& KevinLCD::operator<<(const unsigned char c) {
     al_draw_bitmap(img, 0+MOVE_X, 0+MOVE_Y, 0);
     if ((cursor.column + (cursor.row - 1) * COLUMN >= ROW * COLUMN) && (myerror.getErrorCode() == CURSOR_RIGHT)) {  //Caso en el que el cursor se encuentra al final de todo
         for (int i = 0; i < ROW * COLUMN - 1; i++) {

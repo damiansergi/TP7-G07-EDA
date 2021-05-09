@@ -3,6 +3,7 @@
 #include "basicLCD.h"
 #include "damianLCD.h"
 #include "LCD_Lucas.h"
+#include "kevinLCD.h"
 #include "gui.h"
 
 #include <stdint.h>
@@ -16,7 +17,9 @@ int main(int, char**)
     getTweet tweet;
     damianLCD LCDDamian;
     LCD_Lucas LCDLucas;
-    basicLCD* lcdArray[DISPLAYS] = { &LCDDamian, &LCDLucas, NULL };
+    KevinLCD LCDKevin;
+
+    basicLCD* lcdArray[DISPLAYS] = { &LCDDamian, &LCDKevin , &LCDLucas };
     std::vector<std::string> tweets;
     int error = 0;
 
@@ -41,9 +44,10 @@ int main(int, char**)
 
             error = tweet.getTweets(gui.username, gui, gui.numberOfTweets);
 
-            if (error == 1) {
+            if (error == -1) {
 
-                state = gui.functions(state, tweets);
+                state = gui.functions(PRINTERROR, tweets);
+                al_rest(5);
             }
             else {
 

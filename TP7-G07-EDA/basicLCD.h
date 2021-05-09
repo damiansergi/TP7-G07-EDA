@@ -17,6 +17,7 @@ class lcdError
 {
 public:
 	lcdError(std::string name, std::string desc, unsigned long code);
+	lcdError(){}
 	std::string getErrorName();
 	std::string getErrorDescription();
 	unsigned long getErrorCode();

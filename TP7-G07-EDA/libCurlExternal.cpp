@@ -117,7 +117,7 @@ int getTweet::getTweets(std::string account, Gui& gui, int number_of_tweets=10)
 		{
 			//Si hubo algun error, se muestra el error que devuelve la libreria
 			std::cerr << e.what() << std::endl;
-			return 0;
+			return -1;
 		}
 	}
 	else
