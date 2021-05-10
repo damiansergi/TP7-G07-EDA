@@ -46,6 +46,7 @@ bool LCD_Lucas::lcdMoveCursorLeft()
 		if (lcdMoveCursorUp())
 		{
 			this->cursor.column = LCD_COLUMNS-1;
+			simularLCD_Lucas();
 			return true;//moverse arriba (si puede) 
 		}
 		else
@@ -56,6 +57,7 @@ bool LCD_Lucas::lcdMoveCursorLeft()
 	else
 	{
 		cursor.column--;
+		simularLCD_Lucas();
 		return true;
 	}
 }
@@ -67,6 +69,7 @@ bool LCD_Lucas::lcdMoveCursorRight()
 		if (lcdMoveCursorDown())
 		{
 			this->cursor.column = 0;
+			simularLCD_Lucas();
 			return true;//moverse abajo (si puede) 
 		}
 		else
@@ -78,6 +81,7 @@ bool LCD_Lucas::lcdMoveCursorRight()
 	else
 	{
 		cursor.column++;	//moverse a l a derecha
+		simularLCD_Lucas();
 		return true;
 	}
 }
@@ -91,6 +95,7 @@ bool LCD_Lucas::lcdMoveCursorDown()
 	else
 	{
 		cursor.row++;
+		simularLCD_Lucas();
 		return true;
 	}
 }
@@ -104,6 +109,7 @@ bool LCD_Lucas::lcdMoveCursorUp()
 	else
 	{
 		cursor.row--;
+		simularLCD_Lucas();
 		return true;
 	}
 }
@@ -212,14 +218,7 @@ basicLCD& LCD_Lucas::operator<<(const char* c)
 
 bool LCD_Lucas::lcdInitOk()
 {
-	if (initError)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return (initError)
 }
 
 void LCD_Lucas::simularLCD_Lucas()
