@@ -16,12 +16,13 @@
 #include "basicLCD.h"
 
 #define DISPLAYS 3
-#define FRAMESREFERENCE 250
-#define PAUSA_PRUDENCIA 2
+#define FRAMESREFERENCE 500
+#define PAUSA_PRUDENCIA 2500
 
 enum LCDNAME {DAMIAN = 0, KEVIN, MATEO, DONTSHOW};
 
-enum DisplayState {STOP_RUNNING = 0, USERNAMEINPUT, DOWNLOADINGTWEETS, SHOWINGTWEETS, TRANSFORMINGTWEETS, PRINTERROR};
+enum DisplayState {STOP_RUNNING = 0, USERNAMEINPUT, DOWNLOADINGTWEETS, SHOWINGTWEETS,
+					TRANSFORMINGTWEETS, PRINTERROR, ULTIMOTWEET};
 
 class Gui {
 public:
@@ -34,6 +35,7 @@ public:
 	DisplayState functions(DisplayState estado, vector<string>& tweets);
 	int printInDisplay(LCDNAME name1, LCDNAME name2, LCDNAME name3, vector<string>& tweets);
 	void setLCDArray(int index, basicLCD* lcd);
+	void clearFrameCounter();
 
 	//Variables
 	int numberOfTweets;
@@ -57,6 +59,7 @@ private:
 	int tweetShownOFFSET;
 	int actualTweet;
 	int framesCounter;
+	bool pauseIndicator;
 
 	basicLCD * lcdArray[DISPLAYS];
 };
