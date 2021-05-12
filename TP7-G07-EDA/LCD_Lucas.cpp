@@ -1,6 +1,6 @@
 #include "LCD_Lucas.h"
 
-
+ALLEGRO_FONT* font_L = NULL;
 LCD_Lucas::LCD_Lucas()
 {
 
@@ -13,9 +13,10 @@ LCD_Lucas::LCD_Lucas()
 	{
 		for (int j = 0; j < LCD_COLUMNS; j++)
 		{
-			this->array[i][j] = NULL;
+			this->array[i][j] = 'h';
 		}
 	}
+	font_L = al_create_builtin_font();
 }
 LCD_Lucas::~LCD_Lucas()
 {
@@ -46,7 +47,6 @@ bool LCD_Lucas::lcdMoveCursorLeft()
 		if (lcdMoveCursorUp())
 		{
 			this->cursor.column = LCD_COLUMNS-1;
-			simularLCD_Lucas();
 			return true;//moverse arriba (si puede) 
 		}
 		else
@@ -57,7 +57,7 @@ bool LCD_Lucas::lcdMoveCursorLeft()
 	else
 	{
 		cursor.column--;
-		simularLCD_Lucas();
+
 		return true;
 	}
 }
@@ -65,7 +65,7 @@ bool LCD_Lucas::lcdMoveCursorLeft()
 bool LCD_Lucas::lcdMoveCursorRight()
 {
 	if (this->cursor.column >= LCD_COLUMNS - 1)//resto uno porque el contador arranca en 0
-	{											//resto otro porque si esta en la ultima columna no puede
+	{		/*									//resto otro porque si esta en la ultima columna no puede
 		if (lcdMoveCursorDown())
 		{
 			this->cursor.column = 0;
@@ -75,13 +75,14 @@ bool LCD_Lucas::lcdMoveCursorRight()
 		else
 		{
 			return false;
-		}
+		}*/
+		return false;
 	}
 
 	else
 	{
 		cursor.column++;	//moverse a l a derecha
-		simularLCD_Lucas();
+
 		return true;
 	}
 }
@@ -95,7 +96,7 @@ bool LCD_Lucas::lcdMoveCursorDown()
 	else
 	{
 		cursor.row++;
-		simularLCD_Lucas();
+
 		return true;
 	}
 }
@@ -109,7 +110,7 @@ bool LCD_Lucas::lcdMoveCursorUp()
 	else
 	{
 		cursor.row--;
-		simularLCD_Lucas();
+
 		return true;
 	}
 }
@@ -167,13 +168,14 @@ basicLCD& LCD_Lucas::operator<<(const unsigned char c)
 
 basicLCD& LCD_Lucas::operator<<(const char* c)
 {
+
 	int strLength = 0;
 	while (c[strLength] != '\0' && c[strLength] != '\n')
 	{
 		strLength++;
 	}
 
-	if (strLength >= (LCD_ROWS * LCD_COLUMNS)) // 2 x 16 = 32
+	if (strLength > (LCD_ROWS * LCD_COLUMNS)) // 2 x 16 = 32
 	{
 		this->cursor.column = LCD_COLUMNS-1 ;
 		this->cursor.row = LCD_ROWS-1;
@@ -189,62 +191,89 @@ basicLCD& LCD_Lucas::operator<<(const char* c)
 	}
 	else
 	{
+		/*
 		int next = true;
 		int i = 0;
 		do
 		{
 			if (c[i] != '\n' && c[i] != '\0')
 			{
-				this->array[this->cursor.row][this->cursor.column] = c[i];
-				i++;
+				this->array[this->cursor.row][this->cursor.column] = c[i++];
 				if (!lcdMoveCursorRight())
 				{
 					next = false;
+
 				}
 			}
 			else
 			{
 				next = false;
 			}
+			
 
 		} while (next);
+		*/
+		int t = 0;
+		for (int i = 0; i < LCD_ROWS; i++)
+		{
+			for (int j = 0; j < LCD_COLUMNS; j++)
+			{
+				this->array[i][j] = c[t++];
+			}
+		}
+		if (!lcdMoveCursorDown())
+		{
+			this->cursor.row = 0;
+			this->initError = 0;
+		}
 	}
 	simularLCD_Lucas();
 	return *this;
 }
 
-
+/*
+al_draw_filled_triangle(35, 350, 85, 375, 35, 400, al_map_rgb_f(0, 1, 0));
+al_init_primitives_addon();
+*/
 
 
 bool LCD_Lucas::lcdInitOk()
 {
-	return (initError)
+
+
+	return initError;
 }
 
 void LCD_Lucas::simularLCD_Lucas()
 {
+#define X1 500
+#define Y1 530
+#define X2 670
+#define Y2 630
+	al_draw_filled_rectangle(X1, Y1, X2, Y2, al_map_rgb_f(0, 0, 0));
 
 	for (int i = 0; i < LCD_ROWS; i++)
 	{
 		for (int j = 0; j < LCD_COLUMNS; j++)
 		{
-			if (i == 1)
+			if (i == 0)
 			{
-				al_draw_textf(font, al_map_rgb(255, 255, 255), (j * LETTER_W) + LETTER_S, (i * LETTER_H) + LETTER_S, 0, "%c", array[i][j]);
+				al_draw_textf(font_L, al_map_rgb(255, 255, 255), X1 + (j * LETTER_W) + LETTER_S, Y1 + (LETTER_H) + LETTER_S, 0, "%c", array[i][j]);
 			}
 			else
 			{
-				al_draw_textf(font, al_map_rgb(255, 255, 255), (j * LETTER_W) + LETTER_S, (i * LETTER_H) + LETTER_S, 0, "%c", array[i][j]);
+				al_draw_textf(font_L, al_map_rgb(255, 255, 255), X1 + (j * LETTER_W) + LETTER_S, Y1 + (i * LETTER_H) + LETTER_S, 0, "%c", array[i][j]);
 			}
 		}
 	}
 
-	al_draw_line(cursor.column * LETTER_W + LETTER_S, (cursor.row + 1) * LETTER_H, (cursor.column * LETTER_W + LETTER_W), (cursor.row + 1) * LETTER_H, al_map_rgb(0, 255, 0), 2);
+	//al_draw_line(X1+0012or.column * LETTER_W + LETTER_S, Y1+(cursor.row + 1) * LETTER_H, X1+(cursor.column * LETTER_W + LETTER_W), Y1+(cursor.row + 1) * LETTER_H, al_map_rgb(0, 255, 0), 2);
 
 }
+
+
 lcdError& LCD_Lucas::lcdGetError()
 {
+
 	return this->Lucas_LCDError;
 }
-
-

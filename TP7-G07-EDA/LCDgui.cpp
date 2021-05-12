@@ -335,6 +335,7 @@ int Gui::printInDisplay(LCDNAME name1, LCDNAME name2, LCDNAME name3, vector<stri
 
             *(lcdShownArray[i]) << (tweets[actualTweet * 2]).c_str();   //Imprimo la primera linea
             
+            
             tweetprint = (tweets[actualTweet * 2 + 1]).substr(tweetShownOFFSET, 16);    //Imprimo la 2da linea y la voy corriendo
 
             *(lcdShownArray[i]) << tweetprint.c_str();

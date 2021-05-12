@@ -176,8 +176,6 @@ public:
 	
 
 private:
-	ALLEGRO_DISPLAY* display;
-	ALLEGRO_FONT* font;
 	lcdError Lucas_LCDError;
 	cursorPosition cursor;
 	char array[LCD_ROWS][LCD_COLUMNS];		// EL LCD en si

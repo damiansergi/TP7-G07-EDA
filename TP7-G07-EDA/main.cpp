@@ -19,7 +19,7 @@ int main(int, char**)
     LCD_Lucas LCDLucas;
     KevinLCD LCDKevin;
 
-    basicLCD* lcdArray[DISPLAYS] = { &LCDDamian, &LCDKevin , &LCDLucas };
+    basicLCD* lcdArray[DISPLAYS] = { &LCDDamian, &LCDKevin ,&LCDLucas };
     std::vector<std::string> tweets;
     int error = 0;
 
@@ -33,6 +33,7 @@ int main(int, char**)
     DisplayState state = USERNAMEINPUT; //We begin reading the username and number of tweets that will be read
 
     // Main loop
+  
 
     while (state != STOP_RUNNING)
     {
@@ -66,6 +67,7 @@ int main(int, char**)
         else if (state == SHOWINGTWEETS) {
 
             state = gui.functions(state, tweets);
+
         }
         else if (state == ULTIMOTWEET) {
 
