@@ -214,17 +214,15 @@ basicLCD& LCD_Lucas::operator<<(const char* c)
 		} while (next);
 		*/
 		int t = 0;
-		for (int i = 0; i < LCD_ROWS; i++)
+		for (int j = 0; j < LCD_COLUMNS; j++)
 		{
-			for (int j = 0; j < LCD_COLUMNS; j++)
-			{
-				this->array[i][j] = c[t++];
-			}
+			this->array[this->cursor.row][j] = c[t++];
 		}
+
 		if (!lcdMoveCursorDown())
 		{
+			this->cursor.column = 0;
 			this->cursor.row = 0;
-			this->initError = 0;
 		}
 	}
 	simularLCD_Lucas();
@@ -262,7 +260,7 @@ void LCD_Lucas::simularLCD_Lucas()
 			}
 			else
 			{
-				al_draw_textf(font_L, al_map_rgb(255, 255, 255), X1 + (j * LETTER_W) + LETTER_S, Y1 + (i * LETTER_H) + LETTER_S, 0, "%c", array[i][j]);
+				al_draw_textf(font_L, al_map_rgb(255, 255, 255), X1 + (j * LETTER_W) + LETTER_S, Y1 + ((i+1) * LETTER_H) + LETTER_S, 0, "%c", array[i][j]);
 			}
 		}
 	}
